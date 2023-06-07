@@ -1,0 +1,75 @@
+import random
+import json
+
+print('ANAGRAM GAME')
+print('Um jogo que põe à prova a tua cultura em inglês...ou os teus dotes de adivinhação!')
+print()
+user_name=input('Qual é o teu nome de Vencedor? ')
+print()
+print('REGRAS: ', user_name, 'vais ter 3 tentativas para adivinhar a palavra baralhada, através de uma pista dada ao início. Cada tentativa corresponte a uma pontuação diferente: ')
+print()
+print('Se acertares à primeira tentativa somas 5 pontos ao total;')
+print('Se acertares à segunda tentativa somas 3 pontos ao total;')
+print('Se acertares à terceira tentativa somas 1 ponto ao total.')
+print()
+print('Tens a possibilidade de parar de jogar depois de cada ronda. Se saíres do jogo será te apresentada a tua pontuação final. Boa Sorte!')
+print()
+    
+ponto_t=[]
+rondas=0
+
+while True:
+    with open('dictionary.json', 'r') as f:
+        word_dict = json.load(f)
+    word_dict = {i:j for i, j in word_dict.items() if len(i) <= 5}
+    word = random.choice(list(word_dict.keys()))
+    meaning = word_dict[word]
+    anagram = ''.join(random.sample(word, len(word)))
+   
+    print('A palavra: ' + anagram)
+    print('Pista: ' + meaning)
+    
+    max_attempts = 3
+    
+    guess = ''
+    attempt = 1
+    
+    while guess != word and attempt <= max_attempts:
+        guess = input('O teu palpite? (' + str(attempt) + ' de ' + str(max_attempts) + '): ')
+        guess_low=guess.lower()
+      
+        if guess_low == word:
+            print()
+            print('Parabéns', user_name, '! Acertaste!')
+            print('A palavra certa era mesmo', word)
+        
+        else:
+            print('Não foi desta, tenta novamente.')
+            print()
+            attempt=attempt + 1
+            
+    if attempt==1:
+        ponto_t.append(5)
+    elif attempt==2:
+        ponto_t.append(3)
+    elif attempt==3:
+        ponto_t.append(1)
+    else:
+        ponto_t.append(0)
+        print('A Palavra certa era: ', word)
+        
+    print('Pontuação desta ronda:', ponto_t[-1])
+    
+    rondas=rondas+1
+    print()
+    print(user_name,',')
+    play_again = input('Queres jogar novamente? (s/n): ')
+    print()
+            
+    play_again=play_again.lower()
+    
+    if play_again == 'n':
+        print('Espero que te tenhas divertido!')
+        print('A tua pontuação final é: ', sum(ponto_t))
+        print('Total de rondas: ', rondas)
+        break
